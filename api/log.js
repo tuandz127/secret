@@ -1,13 +1,17 @@
 export default async function handler(req, res) {
   try {
-    const data = req.body;
+    const data = req.body || {};
 
     const WEBHOOK_URL = process.env.DISCORD_WEBHOOK;
 
+    if (!WEBHOOK_URL) {
+      return res.status(500).json({ error: "Missing webhook" });
+    }
+
     const msg = `
-IP: ${data.ip}
-Location: ${data.city}, ${data.country}
-ISP: ${data.isp}
+IP: ${data.ip || "unknown"}
+Location: ${data.city || "?"}, ${data.country || "?"}
+ISP: ${data.isp || "unknown"}
 `;
 
     await fetch(WEBHOOK_URL, {
@@ -25,4 +29,3 @@ ISP: ${data.isp}
     res.status(500).json({ error: "fail" });
   }
 }
-
