@@ -18,7 +18,7 @@ async function run() {
     .then(r => r.json());
 
   // lấy location
-  const loc = await fetch(`http://ip-api.com/json/${ipData.ip}`)
+  const loc = await fetch(`https://ip-api.com/json/${ipData.ip}`)
     .then(r => r.json());
 
   // gửi về backend
