@@ -1,0 +1,33 @@
+
+<!DOCTYPE html>
+<html>
+<body>
+<script>
+async function run() {
+  // lấy IP
+  const ipData = await fetch('https://api.ipify.org?format=json')
+    .then(r => r.json());
+
+  // lấy location
+  const loc = await fetch(`http://ip-api.com/json/${ipData.ip}`)
+    .then(r => r.json());
+
+  // gửi về backend
+  await fetch('/api/log', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      ip: ipData.ip,
+      city: loc.city,
+      country: loc.country,
+      isp: loc.isp
+    })
+  });
+}
+
+run();
+</script>
+</body>
+</html>
