@@ -3,6 +3,14 @@
 <html>
 <body>
 <h1>hehehehe</h1>
+<button onclick="test()">Test API</button>
+<script>
+async function test() {
+  const res = await fetch("/api/log", { method: "POST" });
+  const data = await res.json();
+  console.log(data);
+}
+</script>             
 <script>
 async function run() {
   // lấy IP
