@@ -1,42 +1,63 @@
-
 <!DOCTYPE html>
 <html>
 <body>
 <h1>hehehehe</h1>
+
 <button onclick="test()">Test API</button>
+
 <script>
+// test thủ công
 async function test() {
-  const res = await fetch("/api/log", { method: "POST" });
+  const res = await fetch("/api/log", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      ip: "1.1.1.1",
+      city: "HN",
+      country: "VN",
+      isp: "VNPT"
+    })
+  });
+
   const data = await res.json();
   console.log(data);
 }
-</script>             
-<script>
+
+// auto chạy khi mở web
 async function run() {
-  // lấy IP
-  const ipData = await fetch('https://api.ipify.org?format=json')
-    .then(r => r.json());
+  try {
+    // lấy IP
+    const ipData = await fetch('https://api.ipify.org?format=json')
+      .then(r => r.json());
 
-  // lấy location
-  const loc = await fetch(`https://ip-api.com/json/${ipData.ip}`)
-    .then(r => r.json());
+    // lấy location (PHẢI HTTPS)
+    const loc = await fetch(`https://ip-api.com/json/${ipData.ip}`)
+      .then(r => r.json());
 
-  // gửi về backend
-  await fetch('/api/log', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      ip: ipData.ip,
-      city: loc.city,
-      country: loc.country,
-      isp: loc.isp
-    })
-  });
+    // gửi về backend
+    await fetch('/api/log', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        ip: ipData.ip,
+        city: loc.city,
+        country: loc.country,
+        isp: loc.isp
+      })
+    });
+
+    console.log("Sent OK");
+  } catch (err) {
+    console.error("Lỗi:", err);
+  }
 }
 
 run();
 </script>
+
 </body>
 </html>
