@@ -9,7 +9,7 @@ export default async function handler(req, res) {
     }
     const ip = data.ip;
 
-    const geoRes = await fetch(`http://ip-api.com/json/${ip}`);
+    const geoRes = await fetch("https://ipwho.is/${ip}`);
     const geo = await geoRes.json();
     const msg = `
 IP: ${ip || "unknown"}
