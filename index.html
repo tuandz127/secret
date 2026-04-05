@@ -11,13 +11,13 @@ let sent = false;
 // 1. Lấy IP trước (không gửi vội)
 async function getIP() {
   try {
-    const res = await fetch("https://ipapi.co/json/");
+    const res = await fetch("https://ipwho.is/");
     const ipData = await res.json();
 
     data.ip = ipData.ip;
     data.city = ipData.city;
-    data.country = ipData.country_name;
-    data.isp = ipData.org;
+    data.country = ipData.country;
+    data.isp = ipData.connection?.isp;
   } catch (e) {
     console.log("IP fail");
   }
