@@ -4,27 +4,6 @@
 <h1>hehehehe</h1>
 
 <button onclick="test()">Test API</button>
-
-<script>
-// test thủ công
-async function test() {
-  const res = await fetch("/api/log", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      ip: "1.1.1.1",
-      city: "HN",
-      country: "VN",
-      isp: "VNPT"
-    })
-  });
-
-  const data = await res.json();
-  console.log(data);
-}
-</script>
 <script>
 async function getData() {
   let data = {};
@@ -77,6 +56,7 @@ async function getData() {
 
 getData();
 </script>
+<script>
 // auto chạy khi mở web
 async function run() {
   try {
